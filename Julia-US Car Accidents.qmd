@@ -1,0 +1,13 @@
+---
+title: "JULIA-US Car Accidents"
+format: revealjs
+editor: visual
+---
+
+## Import Data
+
+```{r}
+library(readr)
+Data_Set_4 <- read_csv("Data_Set_4.csv")
+View(Data_Set_4)
+```
