@@ -11,3 +11,111 @@ library(readr)
 Data_Set_4 <- read_csv("Data_Set_4.csv")
 View(Data_Set_4)
 ```
+
+```{r}
+
+Data_Set_4 |> names()
+```
+
+```{r}
+Data_Set_4 |>
+  dplyr::pull(Weather_Condition) |>
+  unique()
+```
+
+```{r}
+
+library(dplyr)
+
+Data_Set_4 <- Data_Set_4 |>
+  mutate(Weather_Category = case_when(
+    Weather_Condition %in% c(
+      "Clear", "Fair", "Fair / Windy", "Partly Cloudy", 
+      "Mostly Cloudy", "Partly Cloudy / Windy", "Mostly Cloudy / Windy"
+    ) ~ "Clear / Fair",
+
+    Weather_Condition %in% c(
+      "Cloudy", "Overcast", "Cloudy / Windy", "Scattered Clouds"
+    ) ~ "Cloudy / Overcast",
+
+    Weather_Condition %in% c(
+      "Fog", "Mist", "Haze", "Patches of Fog", "Shallow Fog",
+      "Shallow Fog / Windy", "Light Fog", "Light Haze", 
+      "Fog / Windy", "Drizzle and Fog"
+    ) ~ "Fog / Haze / Mist",
+
+    Weather_Condition %in% c(
+      "Light Rain", "Rain", "Heavy Rain", "Drizzle", "Heavy Drizzle", 
+      "Light Drizzle", "Light Rain Showers", "Rain Showers", 
+      "Rain Shower", "Rain Shower / Windy", "Drizzle / Windy",
+      "Light Rain / Windy", "Light Drizzle / Windy", 
+      "N/A Precipitation", "Showers in the Vicinity", "Light Rain Shower"
+    ) ~ "Rain / Drizzle",
+
+    Weather_Condition %in% c(
+      "Light Snow", "Snow", "Heavy Snow", "Light Snow Showers", 
+      "Heavy Snow / Windy", "Snow / Windy", "Snow and Sleet", 
+      "Light Snow and Sleet", "Light Snow and Sleet / Windy", 
+      "Snow Grains", "Light Snow Grains", "Blowing Snow", 
+      "Blowing Snow / Windy", "Drifting Snow / Windy", "Sleet", 
+      "Light Sleet", "Heavy Sleet", "Sleet / Windy", 
+      "Light Sleet / Windy", "Snow and Sleet / Windy", 
+      "Snow and Thunder", "Heavy Snow with Thunder", 
+      "Light Snow with Thunder"
+    ) ~ "Snow / Sleet / Ice",
+
+    Weather_Condition %in% c(
+      "Thunderstorm", "Thunder", "T-Storm", "T-Storm / Windy", 
+      "Thunder / Windy", "Thunder in the Vicinity", "Light Thunderstorm", 
+      "Heavy T-Storm", "Heavy T-Storm / Windy", 
+      "Thunderstorms and Rain", "Thunderstorms and Snow", 
+      "Heavy Thunderstorms and Rain", "Heavy Thunderstorms and Snow", 
+      "Light Thunderstorms and Rain", "Light Thunderstorms and Snow", 
+      "Light Rain with Thunder", "Thunder and Hail", 
+      "Sleet and Thunder", "Heavy Sleet and Thunder", 
+      "Thunder / Wintry Mix", "Thunder / Wintry Mix / Windy"
+    ) ~ "Thunderstorms / Lightning",
+
+    Weather_Condition %in% c(
+      "Widespread Dust", "Widespread Dust / Windy", "Blowing Dust", 
+      "Blowing Dust / Windy", "Sand", "Sand / Dust Whirls Nearby", 
+      "Dust Whirls", "Squalls", "Squalls / Windy"
+    ) ~ "Wind / Dust / Sand",
+
+    Weather_Condition %in% c(
+      "Freezing Rain", "Freezing Rain / Windy", "Light Freezing Rain", 
+      "Light Freezing Rain / Windy", "Freezing Drizzle", 
+      "Heavy Freezing Drizzle", "Light Freezing Drizzle", 
+      "Ice Pellets", "Light Ice Pellets", "Heavy Ice Pellets"
+    ) ~ "Freezing Rain / Ice Pellets",
+
+    Weather_Condition %in% c(
+      "Funnel Cloud", "Hail", "Small Hail", "Volcanic Ash"
+    ) ~ "Other / Rare",
+
+    TRUE ~ "Unknown"
+  ))
+
+Data_Set_4 |>
+  dplyr::pull(Weather_Category) |>
+  unique()
+
+```
+
+```{r}
+library(ggplot2)
+library(scales)
+
+Data_Set_4 |>
+  count(Weather_Category) |>
+  ggplot(aes(x = reorder(Weather_Category, n), y = n)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  scale_y_continuous(labels = comma) +  # ✅ This line fixes the axis
+  labs(
+    title = "Car Accidents by Weather Category",
+    x = "Weather Category",
+    y = "Number of Accidents"
+  ) +
+  theme_minimal()
+```
